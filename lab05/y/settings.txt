@@ -1,0 +1,7 @@
+set termout off
+set serveroutput on size unlimited
+set pagesize 50000
+set linesize 135
+set long 50000
+set trimspool on
+set tab off
