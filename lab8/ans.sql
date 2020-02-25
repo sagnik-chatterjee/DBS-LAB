@@ -165,3 +165,99 @@ BEGIN
  	dbms_output.put_line('RollNo: ' || s || ' GPA: ' || maxx);
 END; 
 /
+
+-- 7
+DECLARE
+	gp studenttable.gpa%TYPE;
+	grade varchar(2);
+
+BEGIN
+	for i in 1..5 loop
+		select gpa into gp from studenttable where rollno = i;
+
+		if (gp>=9 and gp<=10) then goto ap;
+		elsif (gp>=8 and gp<9) then	goto aa;
+		elsif (gp>=7 and gp<8) then goto bb;
+		elsif (gp>=6 and gp<7) then	goto cc;
+		elsif (gp>=5 and gp<6) then	goto dd;
+		elsif (gp>=4 and gp<5) then	goto ee;
+		else goto ff;
+		end if;
+
+		<<ap>>
+			grade:='A+';
+			goto prnt;
+		
+		<<aa>>
+			grade:='A';
+			goto prnt;
+		
+		<<bb>>
+			grade:='B';
+			goto prnt;
+		
+		<<cc>>
+			grade:='C';
+			goto prnt;
+		
+		<<dd>>
+			grade:='D';
+			goto prnt;
+		
+		<<ee>>
+			grade:='E';
+			goto prnt;
+		
+		<<ff>>
+			grade:='F';
+		
+		<<prnt>>
+			dbms_output.put_line('Roll.no. ' || i || ' Grade ' || grade);
+
+	end loop;
+
+END;
+/
+
+-- 8
+DECLARE
+	nam instructor.name%TYPE;
+	val instructor%ROWTYPE;
+
+BEGIN
+	nam := '&n';
+	select * into val from instructor where name=nam;
+	dbms_output.put_line(val);
+END;
+/
+
+-- 9
+DECLARE
+	OutOfRangeExptn Exception;
+	gp studenttable.gpa%TYPE;
+	grade studenttable.lettergrade%TYPE;
+
+BEGIN
+	for i in 1..5 loop
+		select gpa into gp from studenttable where rollno = i;
+		
+		if (gp>=9 and gp<=10) then grade:='A+';
+		elsif (gp>=8 and gp<9) then grade:='A';
+		elsif (gp>=7 and gp<8) then grade:='B';
+		elsif (gp>=6 and gp<7) then grade:='C';
+		elsif (gp>=5 and gp<6) then grade:='D';
+		elsif (gp>=4 and gp<5) then grade:='E';
+		elsif (gp>=0 and gp<4) then grade:='F';
+		else RAISE OutOfRangeExcptn;
+		end if;
+
+		update studenttable set lettergrade=grade where rollno=i;
+	end loop;
+
+EXCEPTION
+	when OutOfRangeExcptn then
+		dbms_output.put_line('GPA out of range');
+	when others then
+		dbms_output.put_line('Error');
+END;
+/
